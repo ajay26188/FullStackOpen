@@ -29,6 +29,10 @@ let persons = [
     }
 ]
 
+// Serve static files from the 'dist' folder (built React frontend)
+// This allows frontend and backend to be served from the same server in production
+app.use(express.static('dist'));
+
 //Returing all phonebook entries
 app.get('/api/persons', (request,response) => {
     response.json(persons)
