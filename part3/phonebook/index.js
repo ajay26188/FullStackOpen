@@ -1,7 +1,9 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
+app.use(cors())
 
-//THis line is for POST requests
+//THis line is for POST requests (middleware)
 app.use(express.json())
 
 let persons = [
