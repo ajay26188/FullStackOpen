@@ -87,6 +87,15 @@ const App = () => {
         displayMessage(newPerson.name)
         
       })
+      .catch(error => {
+        const message = error.response.data.error
+        //console.log(error.response.data.error)
+        setMessage(`Added ${message}`)
+        setMessageType('failure')
+        setTimeout(()=> {
+        setMessage('')
+        },3000)
+      })
       setNewName('')
       setNewNumber('') 
     }
