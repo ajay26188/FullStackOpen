@@ -1,0 +1,80 @@
+//new Express router instance for handling blog-related routes
+require('dotenv').config()
+const blogsRouter = require('express').Router()
+const Blog = require('../models/bloglist.js')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+const {userExtractor} = require('../utils/middleware')
+
+blogsRouter.get('/', async(request, response) => {
+  const blogs =await Blog.find({}).populate('user')
+  response.json(blogs)
+})
+  
+blogsRouter.post('/', userExtractor, async(request, response) => {
+    const blog = request.body
+    if (!blog.title || !blog.url) {
+      return response.status(400).json({error: 'title and url both must be provided'})
+    }
+
+    //get user from request object
+    const user = request.user
+
+    // Create blog with likes defaulting to 0 if undefined or null
+    const newBlog = new Blog({
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      user: user._id,
+      likes: blog.likes ?? 0
+    })
+    const savedBlog =await newBlog.save()
+
+    //console.log(user);
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+    response.status(201).json(savedBlog)
+})
+
+blogsRouter.delete('/:id', userExtractor, async(request, response) => {
+  //get user from request object
+  const user = request.user
+
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  }
+
+  if (blog.user.toString() === user._id.toString()) {
+    //Deleting blog
+    await Blog.findByIdAndDelete(request.params.id)
+
+    // Removing blog ID from user's blogs array
+    //blog.user is the ID of the user who had written the blog
+    await User.findByIdAndUpdate(blog.user, {
+    $pull: { blogs: blog._id }
+  })
+    response.status(204).end()
+  }
+})
+
+blogsRouter.put('/:id', async(request, response) => {
+  const {title,author,url,likes} = request.body
+
+  const oldBlog = await Blog.findById(request.params.id)
+  if (!oldBlog) {
+    return response.status(404).end()
+  }
+
+  oldBlog.title = title,
+  oldBlog.author = author,
+  oldBlog.url = url,
+  oldBlog.likes = likes
+
+  const updatedBlog = await oldBlog.save()
+  response.json(updatedBlog)
+})
+
+module.exports = blogsRouter
+
