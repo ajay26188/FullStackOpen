@@ -79,7 +79,25 @@ blogsRouter.put('/:id', async(request, response) => {
   oldBlog.user = user
 
   const updatedBlog = await oldBlog.save()
-  response.json(updatedBlog)
+  const populatedBlog = await updatedBlog.populate('user', { username: 1, name: 1 })
+  response.json(populatedBlog)
+})
+
+blogsRouter.post('/:id/comments', async(request, response) => {
+  const {comment} = request.body
+
+  const oldBlog = await Blog.findById(request.params.id)
+  if (!oldBlog) {
+    return response.status(404).end()
+  }
+
+  //if comments doesn't exist this line will initialize it else this will will do nothing
+  oldBlog.comments = oldBlog.comments || []
+  oldBlog.comments.push(comment)
+
+  const updatedBlog = await oldBlog.save()
+  const populatedBlog = await updatedBlog.populate('user', { username: 1, name: 1 })
+  response.json(populatedBlog)
 })
 
 module.exports = blogsRouter
