@@ -29,13 +29,11 @@ This repository contains my personal solutions and progress for the **Full Stack
 | **2** | Communicating with Server | useEffect, axios, CRUD, modularization |
 | **3** | Backend with Node.js & Express | REST APIs, MongoDB Atlas, Mongoose |
 | **4** | Testing Express Apps | Jest, Supertest, Integration Testing |
-| **5** | Testing React Apps | React Testing Library, E2E Testing with Cypress |
+| **5** | Testing React Apps | React Testing Library, E2E Testing with Playwright |
 | **6** | Advanced State Management | Redux, useReducer, React Query (6d) |
 | **7** | React Router & Custom Hooks | Routing, useParams, useMatch, Custom Hooks |
 | **8** | GraphQL | Apollo Client, Apollo Server, GraphQL queries & mutations |
 | **9** | TypeScript | React + TS, Type definitions, Type safety in backend |
 
 ---
-
-## 📁 Repository Structure
 
